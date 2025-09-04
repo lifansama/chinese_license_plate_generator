@@ -17,39 +17,39 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 def parse_args():
     """解析命令行参数"""
     parser = argparse.ArgumentParser(description='根据省份生成车牌')
-    
+
     # 获取所有有效的省份简称用于 choices
     valid_provinces = ProvinceManager.get_all_abbreviations()
-    
-    parser.add_argument('--province', 
-                        required=True, 
+
+    parser.add_argument('--province',
+                        required=True,
                         type=str,
                         choices=valid_provinces,
                         help=f'指定的省份简称. 可选值: {", ".join(valid_provinces)}')
-    
-    parser.add_argument('--number', 
-                        default=10, 
-                        type=int, 
+
+    parser.add_argument('--number',
+                        default=10,
+                        type=int,
                         help='为该省份生成的车牌数量')
-    
-    parser.add_argument('--save-dir', 
-                        default='output_province', 
+
+    parser.add_argument('--save-dir',
+                        default='output_province',
                         help='车牌图像保存的根目录')
-                        
+
     parser.add_argument('--double-ratio',
                         default=0.2,
                         type=float,
                         help='生成双层车牌的比例 (0.0 到 1.0 之间)')
-    
+
     parser.add_argument('--convert-double-to-single',
                         action='store_true',
                         help='将双层车牌转换为单层显示（上下行拼接）')
-                        
+
     args = parser.parse_args()
-    
+
     if not 0.0 <= args.double_ratio <= 1.0:
         raise ValueError("double-ratio 参数必须在 0.0 和 1.0 之间")
-        
+
     return args
 
 
@@ -69,12 +69,21 @@ if __name__ == '__main__':
     province_save_path = os.path.join(args.save_dir, args.province)
     mkdir(province_save_path)
     logging.info(f'将在 {province_save_path} 目录下保存生成的车牌图像...')
-    
+
     # 初始化集成生成器
     generator = IntegratedPlateGenerator(plate_models_dir="plate_model", font_models_dir="font_model")
-    
+
     # 定义可能生成双层车牌的类型
     double_layer_types = [PlateType.ORDINARY_YELLOW, PlateType.ORDINARY_TRAILER]
+
+    # 定义普通车牌类型（排除特殊车牌，只生成带省份的车牌）
+    normal_plate_types = [
+        PlateType.ORDINARY_BLUE,     # 普通蓝牌
+        PlateType.ORDINARY_YELLOW,   # 黄牌
+        PlateType.NEW_ENERGY_GREEN,  # 新能源绿牌
+        PlateType.ORDINARY_COACH,    # 教练车牌
+        PlateType.ORDINARY_TRAILER   # 挂车牌
+    ]
 
     for i in tqdm(range(args.number), desc=f"正在为省份 '{args.province}' 生成车牌"):
         try:
@@ -82,7 +91,8 @@ if __name__ == '__main__':
             if random.random() < args.double_ratio:
                 plate_type = random.choice(double_layer_types)
             else:
-                plate_type = None # 随机选择，大概率为单层
+                # 从普通车牌类型中随机选择（排除特殊车牌）
+                plate_type = random.choice(normal_plate_types)
 
             # 配置生成器
             config = PlateGenerationConfig(
@@ -93,12 +103,12 @@ if __name__ == '__main__':
 
             # 生成车牌信息和图像
             plate_info, plate_image = generator.generate_plate_with_image(config, enhance=True)
-            
+
             # 格式化文件名
             layer_str = "double" if plate_info.is_double_layer else "single"
             # 处理背景颜色（可能是枚举或字符串）
-            bg_color_str = (plate_info.background_color.value 
-                           if hasattr(plate_info.background_color, 'value') 
+            bg_color_str = (plate_info.background_color.value
+                           if hasattr(plate_info.background_color, 'value')
                            else plate_info.background_color)
             # 将 green_yellow 也当作 green 处理
             if bg_color_str == "green_yellow":
@@ -110,5 +120,5 @@ if __name__ == '__main__':
         except Exception as e:
             logging.error(f"为省份 '{args.province}' 生成第 {i+1} 个车牌时失败，跳过。", exc_info=True)
             continue
-    
+
     logging.info(f"成功为省份 '{args.province}' 生成 {args.number} 个车牌图像到 {province_save_path}")

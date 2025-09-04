@@ -5,6 +5,7 @@ import cv2
 import logging
 
 from src.generator.integrated_generator import IntegratedPlateGenerator
+from src.generator.plate_generator import PlateGenerationConfig
 
 # 配置日志记录
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -14,6 +15,8 @@ def parse_args():
     parser = argparse.ArgumentParser(description='中国车牌生成器 (重构版)')
     parser.add_argument('--number', default=1000, type=int, help='生成车牌数量')
     parser.add_argument('--save-adr', default='output_multi', help='车牌图像保存路径')
+    parser.add_argument('--convert-double-to-single', action='store_true',
+                        help='将双层车牌转换为单层车牌（仅适用于双层车牌）')
     args = parser.parse_args()
     return args
 
@@ -34,11 +37,14 @@ if __name__ == '__main__':
     
     # 使用集成的生成器
     generator = IntegratedPlateGenerator(plate_models_dir="plate_model", font_models_dir="font_model")
+    config = PlateGenerationConfig(
+                convert_double_to_single=args.convert_double_to_single
+            )
 
     for i in tqdm(range(args.number), desc="正在生成车牌"):
         try:
             # 生成车牌信息和图像
-            plate_info, plate_image = generator.generate_plate_with_image(enhance=True)
+            plate_info, plate_image = generator.generate_plate_with_image(config=config, enhance=True)
             
             # 保存图像 - 使用更清晰的命名规则
             layer_type = "double" if plate_info.is_double_layer else "single"
