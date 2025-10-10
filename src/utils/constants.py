@@ -10,20 +10,20 @@ from enum import Enum
 # 基础常量
 class PlateConstants:
     """车牌基础常量"""
-    
+
     # 禁用字母（符合GA 36-2018标准）
     FORBIDDEN_LETTERS: List[str] = ["I", "O"]
-    
+
     # 所有可用字母（排除I、O）
     AVAILABLE_LETTERS: List[str] = [
-        "A", "B", "C", "D", "E", "F", "G", "H", "J", "K", 
-        "L", "M", "N", "P", "Q", "R", "S", "T", "U", "V", 
+        "A", "B", "C", "D", "E", "F", "G", "H", "J", "K",
+        "L", "M", "N", "P", "Q", "R", "S", "T", "U", "V",
         "W", "X", "Y", "Z"
     ]
-    
+
     # 所有可用数字
     AVAILABLE_DIGITS: List[str] = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
-    
+
     # 特殊字符
     SPECIAL_CHARS: Dict[str, str] = {
         "USE": "使",      # 使馆
@@ -41,7 +41,7 @@ class PlateConstants:
 # 序号生成规则常量
 class SequenceConstants:
     """序号生成相关常量"""
-    
+
     # 普通汽车5位序号的启用顺序（基于GA 36-2018）
     ORDINARY_SEQUENCE_PATTERNS: List[Dict[str, any]] = [
         {"order": 1, "pattern": "DDDDD", "description": "5位都是数字", "example": "12345"},
@@ -55,13 +55,13 @@ class SequenceConstants:
         {"order": 9, "pattern": "DDDLL", "description": "第4、5位是字母，其余是数字", "example": "123AB"},
         {"order": 10, "pattern": "LDLDD", "description": "第1、3位是字母，其余是数字", "example": "A1B23"},
     ]
-    
+
     # 新能源汽车纯电动字母（首位或末位）
     NEW_ENERGY_PURE_ELECTRIC_LETTERS: List[str] = ["D", "A", "B", "C", "E"]
-    
+
     # 新能源汽车非纯电动字母（首位或末位）
     NEW_ENERGY_NON_PURE_ELECTRIC_LETTERS: List[str] = ["F", "G", "H", "J", "K"]
-    
+
     # 序号资源使用率阈值（60%后可启用下一种组合方式）
     RESOURCE_USAGE_THRESHOLD: float = 0.6
 
@@ -69,7 +69,7 @@ class SequenceConstants:
 # 车牌尺寸常量（单位：毫米）
 class PlateDimensions:
     """车牌尺寸常量"""
-    
+
     # 标准车牌尺寸
     SIZES: Dict[str, Tuple[int, int]] = {
         # 汽车号牌
@@ -82,11 +82,11 @@ class PlateDimensions:
         "embassy": (440, 140),              # 使馆汽车号牌
         "consulate": (440, 140),            # 领馆汽车号牌
         "hong_kong_macao": (440, 140),      # 港澳入出境车号牌
-        
+
         # 新能源汽车号牌（宽度增加40mm）
         "new_energy_small": (480, 140),     # 小型新能源汽车号牌
         "new_energy_large": (480, 140),     # 大型新能源汽车号牌
-        
+
         # 摩托车号牌
         "motorcycle": (220, 140),           # 普通摩托车号牌
         "light_motorcycle": (220, 140),     # 轻便摩托车号牌
@@ -94,7 +94,7 @@ class PlateDimensions:
         "consulate_motorcycle": (220, 140), # 领馆摩托车号牌
         "coach_motorcycle": (220, 140),     # 教练摩托车号牌
         "police_motorcycle": (220, 140),    # 警用摩托车号牌
-        
+
         # 其他类型
         "low_speed_vehicle": (300, 165),    # 低速车号牌
         "temporary": (220, 140),            # 临时行驶车号牌
@@ -106,7 +106,7 @@ class PlateDimensions:
 # 车牌颜色配置常量
 class PlateColors:
     """车牌颜色配置常量"""
-    
+
     COLOR_SCHEMES: Dict[str, Dict[str, str]] = {
         "blue": {
             "background": "#1E90FF",    # 蓝色背景
@@ -147,7 +147,7 @@ class PlateColors:
 # 车牌类型与颜色映射
 class PlateTypeColorMapping:
     """车牌类型与颜色的映射关系"""
-    
+
     TYPE_COLOR_MAP: Dict[str, str] = {
         "ordinary_large": "yellow",         # 大型汽车 - 黄底黑字
         "ordinary_small": "blue",           # 小型汽车 - 蓝底白字
@@ -170,14 +170,14 @@ class PlateTypeColorMapping:
 # 字体相关常量
 class FontConstants:
     """字体相关常量"""
-    
+
     # 字符间距（像素）
     CHAR_SPACING: Dict[str, int] = {
         "standard": 8,      # 标准间距
         "new_energy": 6,    # 新能源车牌（字符更多）
         "motorcycle": 10,   # 摩托车号牌
     }
-    
+
     # 字体大小（像素）
     FONT_SIZES: Dict[str, int] = {
         "province": 45,     # 省份简称字体大小
@@ -185,7 +185,7 @@ class FontConstants:
         "sequence": 45,     # 序号字体大小
         "special": 40,      # 特殊字符字体大小（警、使、领等）
     }
-    
+
     # 字符位置偏移
     CHAR_OFFSETS: Dict[str, Tuple[int, int]] = {
         "province": (20, 50),       # 省份简称位置
@@ -197,14 +197,14 @@ class FontConstants:
 # 验证规则常量
 class ValidationConstants:
     """验证规则常量"""
-    
+
     # 车牌号码长度限制
     PLATE_LENGTH_LIMITS: Dict[str, Tuple[int, int]] = {
         "ordinary": (7, 7),         # 普通车牌：7位（省份+代号+5位序号）
         "new_energy": (8, 8),       # 新能源车牌：8位（省份+代号+6位序号）
         "special": (7, 8),          # 特殊车牌：7-8位（可能有特殊字符）
     }
-    
+
     # 错误信息模板
     ERROR_MESSAGES: Dict[str, str] = {
         "invalid_province": "无效的省份简称: {province}",
@@ -220,7 +220,7 @@ class ValidationConstants:
 # 生成器配置常量
 class GeneratorConstants:
     """生成器配置常量"""
-    
+
     # 默认生成参数
     DEFAULT_PARAMS: Dict[str, any] = {
         "batch_size": 1,            # 批量生成数量
@@ -229,7 +229,7 @@ class GeneratorConstants:
         "region_preference": None,  # 地区偏好
         "energy_type": "pure",      # 新能源类型：pure（纯电动）或 hybrid（非纯电动）
     }
-    
+
     # 性能限制
     PERFORMANCE_LIMITS: Dict[str, int] = {
         "max_batch_size": 10000,    # 最大批量生成数量
@@ -241,22 +241,22 @@ class GeneratorConstants:
 # 车牌类型枚举
 class PlateType:
     """车牌类型常量"""
-    
+
     # 普通汽车号牌
     ORDINARY_BLUE = "ordinary_blue"           # 蓝牌小型汽车
     ORDINARY_YELLOW = "ordinary_yellow"       # 黄牌大型汽车
     ORDINARY_COACH = "ordinary_coach"         # 教练汽车
     ORDINARY_TRAILER = "ordinary_trailer"     # 挂车
-    
+
     # 特种车号牌
     POLICE_WHITE = "police_white"             # 警用汽车白牌
     MILITARY_WHITE = "military_white"         # 军队车牌
-    
+
     # 新能源汽车号牌
     NEW_ENERGY_GREEN = "new_energy_green"     # 新能源汽车绿牌（兼容性）
     NEW_ENERGY_SMALL = "new_energy_small"     # 小型新能源汽车绿牌
     NEW_ENERGY_LARGE = "new_energy_large"     # 大型新能源汽车绿牌
-    
+
     # 特殊用途号牌
     EMBASSY_BLACK = "embassy_black"           # 使领馆黑牌
     HONGKONG_BLACK = "hongkong_black"         # 港澳入出境黑牌
